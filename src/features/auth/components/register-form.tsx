@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import z from "zod";
 import {
   Card,
@@ -88,6 +89,12 @@ export const RegisterForm = () => {
                       type="button"
                       disabled={isPending}
                     >
+                      <Image
+                        alt="github"
+                        src="/logos/github.svg"
+                        width={20}
+                        height={20}
+                      />
                       Continue with Github
                     </Button>
                     <Button
@@ -96,6 +103,12 @@ export const RegisterForm = () => {
                       type="button"
                       disabled={isPending}
                     >
+                      <Image
+                        alt="google"
+                        src="/logos/google.svg"
+                        width={20}
+                        height={20}
+                      />
                       Continue with Google
                     </Button>
                   </div>
