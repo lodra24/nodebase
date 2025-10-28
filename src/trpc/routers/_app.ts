@@ -1,8 +1,7 @@
 import { inngest } from "@/inngest/client";
 import { createTRPCRouter, protectedProcedure } from "../init";
 import { db } from "@/lib/db";
-import { google } from "@ai-sdk/google";
-import { generateText } from "ai";
+import { TRPCError } from "@trpc/server";
 export const appRouter = createTRPCRouter({
   testAi: protectedProcedure.mutation(async () => {
     await inngest.send({
@@ -25,5 +24,3 @@ export const appRouter = createTRPCRouter({
 });
 // export type definition of API
 export type AppRouter = typeof appRouter;
-
-//mprocs ekleyeceğiz bir dahakine

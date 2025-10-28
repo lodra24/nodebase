@@ -10,11 +10,23 @@ const Page = () => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const { data } = useQuery(trpc.getWorkflows.queryOptions());
-  const testAi = useMutation(trpc.testAi.mutationOptions());
+  const testAi = useMutation(
+    trpc.testAi.mutationOptions({
+      onSuccess: () => {
+        toast.success("job queued...");
+      },
+      onError: (error) => {
+        toast.error("Something went wrong! " + error);
+      },
+    })
+  );
   const create = useMutation(
     trpc.createWorkflows.mutationOptions({
       onSuccess: () => {
         toast.success("job queued...");
+      },
+      onError: (error) => {
+        toast.error("Something went wrong! " + error);
       },
     })
   );
