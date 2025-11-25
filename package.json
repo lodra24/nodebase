@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "inngest:dev": "inngest-cli dev",
-    "dev:all": "mprocs"
+    "dev:all": "mprocs",
+    "ngrok:dev": "ngrok http --domain=validly-monandrous-laurine.ngrok-free.dev 3000"
   },
   "dependencies": {
     "@ai-sdk/google": "^2.0.24",

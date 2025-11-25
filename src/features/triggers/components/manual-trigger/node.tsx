@@ -9,6 +9,7 @@ import { fetchManualTriggerRealtimeToken } from "./actions";
 
 export const ManualTriggerNode = memo((props: NodeProps) => {
   const [dialogOpen, setDialogOpen] = useState(false);
+
   const nodeStatus = useNodeStatus({
     nodeId: props.id,
     channel: MANUAL_TRIGGER_CHANNEL_NAME,
