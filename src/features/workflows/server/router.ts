@@ -9,7 +9,6 @@ import z from "zod";
 import type { Node, Edge } from "@xyflow/react";
 import { NodeType } from "@prisma/client";
 import { PAGINATION } from "@/config/constants";
-import { inngest } from "@/inngest/client";
 import { sendWorkflowExecution } from "@/inngest/utils";
 
 export const workflowsRouter = createTRPCRouter({
@@ -21,10 +20,6 @@ export const workflowsRouter = createTRPCRouter({
           id: input.id,
           userId: ctx.auth.user.id,
         },
-      });
-      await inngest.send({
-        name: "workflows/execute.workflow",
-        data: { workflowId: input.id },
       });
 
       await sendWorkflowExecution({

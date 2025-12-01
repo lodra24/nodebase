@@ -4,6 +4,7 @@ import { NonRetriableError } from "inngest";
 import { generateText } from "ai";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
 import { geminiChannel } from "@/inngest/channels/gemini";
+import { db } from "@/lib/db";
 
 Handlebars.registerHelper("json", (context) =>
   JSON.stringify(context, null, 2)
@@ -11,6 +12,7 @@ Handlebars.registerHelper("json", (context) =>
 
 type GeminiData = {
   variableName?: string;
+  credentialId?: string;
   model?: string;
   systemPrompt?: string;
   userPrompt?: string;
@@ -45,18 +47,37 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
     throw new NonRetriableError("Gemini node: User prompt is missing");
   }
 
+  if (!data.credentialId) {
+    await publish(
+      geminiChannel().status({
+        nodeId,
+        status: "error",
+      })
+    );
+    throw new NonRetriableError("Credential is required");
+  }
+
   const systemPrompt = data.systemPrompt
     ? Handlebars.compile(data.systemPrompt)(context)
     : "You are a helpful assistant.";
 
-  // TODO: Fetch credential that user selected
-  const credentialValue = process.env.GOOGLE_GENERATIVE_AI_API_KEY!;
+  const userPrompt = Handlebars.compile(data.userPrompt || "")(context);
 
-  const google = createGoogleGenerativeAI({
-    apiKey: credentialValue,
+  const credential = await step.run("get-credential", () => {
+    return db.credential.findUnique({
+      where: {
+        id: data.credentialId,
+      },
+    });
   });
 
-  const userPrompt = Handlebars.compile(data.userPrompt || "")(context);
+  if (!credential) {
+    throw new NonRetriableError("Gemini node: Credential not found");
+  }
+
+  const google = createGoogleGenerativeAI({
+    apiKey: credential.value,
+  });
 
   try {
     const { steps } = await step.ai.wrap("gemini-generate-text", generateText, {
