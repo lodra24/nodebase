@@ -21,6 +21,7 @@ type OpenAIData = {
 export const openAIExecutor: NodeExecutor<OpenAIData> = async ({
   data,
   nodeId,
+  userId,
   context,
   step,
   publish,
@@ -65,6 +66,7 @@ export const openAIExecutor: NodeExecutor<OpenAIData> = async ({
     return db.credential.findUnique({
       where: {
         id: data.credentialId,
+        userId,
       },
     });
   });
