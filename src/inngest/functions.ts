@@ -15,7 +15,26 @@ import { discordChannel } from "./channels/discord";
 import { slackChannel } from "./channels/slack";
 
 export const executeWorkflow = inngest.createFunction(
-  { id: "execute-workflow" },
+  {
+    id: "execute-workflow",
+    retries: 0,
+    onFailure: async ({ event }) => {
+      const failedEventId = event.data.event.id;
+      if (failedEventId) {
+        await db.execution.update({
+          where: {
+            inngestEventId: failedEventId,
+          },
+          data: {
+            status: "FAILED",
+            error: event.data.error.message,
+            errorStack: event.data.error.stack?.toString() || "",
+            completedAt: new Date(),
+          },
+        });
+      }
+    },
+  },
   {
     event: "workflows/execute.workflow",
     channels: [
@@ -32,9 +51,23 @@ export const executeWorkflow = inngest.createFunction(
   },
   async ({ event, step, publish }) => {
     const workflowId = event.data.workflowId;
-    if (!workflowId) {
-      throw new NonRetriableError("Workflow Id is missing!");
+    const inngestEventId = event.id;
+
+    if (!workflowId || !inngestEventId) {
+      throw new NonRetriableError("Workflow Id or Event Id is missing!");
     }
+
+    await step.run("create-execution", async () => {
+      return db.execution.create({
+        data: {
+          workflowId,
+          inngestEventId,
+          status: "RUNNING",
+          error: "",
+          errorStack: "",
+        },
+      });
+    });
 
     const sortedNodes = await step.run("prepare-workflow", async () => {
       const workflow = await db.workflow.findUniqueOrThrow({
@@ -73,6 +106,19 @@ export const executeWorkflow = inngest.createFunction(
         publish,
       });
     }
+
+    await step.run("update-execution-success", async () => {
+      return db.execution.update({
+        where: {
+          inngestEventId,
+        },
+        data: {
+          status: "SUCCESS",
+          completedAt: new Date(),
+          output: context,
+        },
+      });
+    });
 
     return { workflowId, result: context };
   }
