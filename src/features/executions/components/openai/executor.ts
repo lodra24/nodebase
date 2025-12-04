@@ -5,6 +5,7 @@ import { generateText } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import { openaiChannel } from "@/inngest/channels/openai";
 import { db } from "@/lib/db";
+import { decrypt } from "@/lib/encryption";
 
 Handlebars.registerHelper("json", (context) =>
   JSON.stringify(context, null, 2)
@@ -76,7 +77,7 @@ export const openAIExecutor: NodeExecutor<OpenAIData> = async ({
   }
 
   const openai = createOpenAI({
-    apiKey: credential.value,
+    apiKey: decrypt(credential.value),
   });
 
   const userPrompt = Handlebars.compile(data.userPrompt || "")(context);
