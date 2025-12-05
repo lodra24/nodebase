@@ -21,8 +21,12 @@ import {
 import { cn } from "@/lib/utils";
 import React from "react";
 import { Card, CardContent, CardDescription, CardTitle } from "./ui/card";
-import { DropdownMenu, DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
-import { DropdownMenuContent, DropdownMenuTrigger } from "./ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 
 type EntityHeaderProps = {
   title: string;
@@ -281,7 +285,7 @@ export const EntityItem = ({
     <Link href={href} prefetch>
       <Card
         className={cn(
-          "p-4 shadow-none hover:shadow cursor-pointer",
+          "p-4 shadow-none hover:shadow cursor-pointer transition-shadow",
           isRemoving && "opacity-50 cursor-not-allowed",
           className
         )}
@@ -307,6 +311,7 @@ export const EntityItem = ({
                     <Button
                       size="icon"
                       variant="ghost"
+                      className="size-8 hover:bg-muted"
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -322,7 +327,11 @@ export const EntityItem = ({
                       e.stopPropagation();
                     }}
                   >
-                    <DropdownMenuItem onClick={handleRemove}>
+                    <DropdownMenuItem
+                      onClick={handleRemove}
+                      variant="destructive"
+                      className="cursor-pointer font-medium"
+                    >
                       <TrashIcon className="size-4 mr-2" />
                       Delete
                     </DropdownMenuItem>

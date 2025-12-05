@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  EntitySearch,
   EntityContainer,
   EntityHeadar,
   EntityPaginaton,

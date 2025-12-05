@@ -1,7 +1,7 @@
 "use client";
 
 import { CredentialType } from "@prisma/client";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
@@ -47,7 +47,6 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-// Dropdown seçenekleri
 const credentialTypeOptions = [
   {
     value: CredentialType.OPENAI,
