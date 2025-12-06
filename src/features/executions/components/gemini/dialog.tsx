@@ -35,6 +35,12 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import z from "zod";
 
+const AVAILABLE_MODELS = [
+  "gemma-2-27b-it",
+  "gemini-2.5-flash",
+  "gemini-1.5-flash",
+] as const;
+
 const formSchema = z.object({
   variableName: z
     .string()
@@ -43,6 +49,7 @@ const formSchema = z.object({
       message:
         "Variable name must start with a letter or underscore and contain only letters, numbers and underscores.",
     }),
+  model: z.enum(AVAILABLE_MODELS),
   credentialId: z.string().min(1, "Credential is Required"),
   systemPrompt: z.string().optional(),
   userPrompt: z.string().min(1, "User prompt is required"),
@@ -70,6 +77,7 @@ export const GeminiDialog = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       variableName: defaultValues.variableName || "",
+      model: defaultValues.model || "gemma-2-27b-it",
       credentialId: defaultValues.credentialId || "",
       systemPrompt: defaultValues.systemPrompt || "",
       userPrompt: defaultValues.userPrompt || "",
@@ -80,6 +88,7 @@ export const GeminiDialog = ({
     if (open) {
       form.reset({
         variableName: defaultValues.variableName || "",
+        model: defaultValues.model || "gemma-2-27b-it",
         credentialId: defaultValues.credentialId || "",
         systemPrompt: defaultValues.systemPrompt || "",
         userPrompt: defaultValues.userPrompt || "",
@@ -88,6 +97,7 @@ export const GeminiDialog = ({
   }, [
     open,
     defaultValues.variableName,
+    defaultValues.model,
     defaultValues.systemPrompt,
     defaultValues.userPrompt,
     defaultValues.credentialId,
@@ -115,6 +125,34 @@ export const GeminiDialog = ({
             onSubmit={form.handleSubmit(handleSubmit)}
             className="space-y-8 mt-4"
           >
+            <FormField
+              control={form.control}
+              name="model"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Model</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select the model" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {AVAILABLE_MODELS.map((model) => (
+                        <SelectItem key={model} value={model}>
+                          {model}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormDescription>
+                    Default uses high-quota Gemma. Choose Flash models if you
+                    need them.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="credentialId"

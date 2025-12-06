@@ -72,36 +72,50 @@ export const useUpdateWorkflowName = () => {
   );
 };
 
-export const useUpdateWorkflow = () => {
+export const useUpdateWorkflow = (
+  options: { disableToast?: boolean } = {}
+) => {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
+  const { disableToast } = options;
 
   return useMutation(
     trpc.workflow.update.mutationOptions({
       onSuccess: (data) => {
-        toast.success(`Workflow ${data.name} saved!`);
+        if (!disableToast) {
+          toast.success(`Workflow ${data.name} saved!`);
+        }
         queryClient.invalidateQueries(trpc.workflow.getMany.queryOptions({}));
         queryClient.invalidateQueries(
           trpc.workflow.getOne.queryOptions({ id: data.id })
         );
       },
       onError: (error) => {
-        toast.error(`Error to save workflow: ${error.message}`);
+        if (!disableToast) {
+          toast.error(`Error to save workflow: ${error.message}`);
+        }
       },
     })
   );
 };
 
-export const useExecuteWorkflow = () => {
+export const useExecuteWorkflow = (
+  options: { disableToast?: boolean } = {}
+) => {
   const trpc = useTRPC();
+  const { disableToast } = options;
 
   return useMutation(
     trpc.workflow.execute.mutationOptions({
       onSuccess: (data) => {
-        toast.success(`Workflow ${data.name} executed`);
+        if (!disableToast) {
+          toast.success(`Workflow ${data.name} executed`);
+        }
       },
       onError: (error) => {
-        toast.error(`Failed to execute workflow: ${error.message}`);
+        if (!disableToast) {
+          toast.error(`Failed to execute workflow: ${error.message}`);
+        }
       },
     })
   );

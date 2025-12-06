@@ -82,9 +82,12 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
     apiKey: decrypt(credential.value),
   });
 
+  // Prefer high-quota Gemma by default; allow user-selected model when provided.
+  const selectedModel = data.model || "gemma-2-27b-it";
+
   try {
     const { steps } = await step.ai.wrap("gemini-generate-text", generateText, {
-      model: google("gemini-2.0-flash"),
+      model: google(selectedModel),
       system: systemPrompt,
       prompt: userPrompt,
       experimental_telemetry: {
