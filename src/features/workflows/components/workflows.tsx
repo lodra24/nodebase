@@ -11,17 +11,13 @@ import {
   EntityItem,
 } from "@/components/entity-component";
 import { formatDistanceToNow } from "date-fns";
-import {
-  useCreateWorkflows,
-  useRemoveWorkflow,
-  useSuspenseWorkflows,
-} from "../hooks/use-workflows";
-import { useUpgradeModal } from "@/hooks/use-upgrade-modal";
-import { useRouter } from "next/navigation";
+import { useRemoveWorkflow, useSuspenseWorkflows } from "../hooks/use-workflows";
 import { useWorkflowsParams } from "../hooks/use-workflows-params";
 import { useEntitySearch } from "@/hooks/use-entity-search";
 import type { Workflow } from "@prisma/client";
 import { WorkflowIcon } from "lucide-react";
+import { useState } from "react";
+import { CreateWorkflowDialog } from "./create-workflow-dialog";
 
 export const WorkflowsSearch = () => {
   const [params, setParams] = useWorkflowsParams();
@@ -52,30 +48,16 @@ export const WorkflowsList = () => {
 };
 
 export const WorkflowsHeader = ({ disabled }: { disabled?: boolean }) => {
-  const createWorkflow = useCreateWorkflows();
-  const { handleError, modal } = useUpgradeModal();
-  const router = useRouter();
-
-  const handleCreate = () => {
-    createWorkflow.mutate(undefined, {
-      onSuccess: (data) => {
-        router.push(`/workflows/${data.id}`);
-      },
-      onError: (error) => {
-        handleError(error);
-      },
-    });
-  };
+  const [open, setOpen] = useState(false);
   return (
     <>
-      {modal}
+      <CreateWorkflowDialog open={open} onOpenChange={setOpen} />
       <EntityHeadar
         title="workflows"
         description="Create and Manage Your Workflows"
-        onNew={handleCreate}
+        onNew={() => setOpen(true)}
         newButtonLabel="New Workflow"
         disabled={disabled}
-        isCreating={createWorkflow.isPending}
       />
     </>
   );
@@ -119,25 +101,12 @@ export const WorkflowsError = () => {
 };
 
 export const WorkflowsEmpty = () => {
-  const router = useRouter();
-  const createWorkflow = useCreateWorkflows();
-  const { handleError, modal } = useUpgradeModal();
-
-  const handleCreate = () => {
-    createWorkflow.mutate(undefined, {
-      onError: (error) => {
-        handleError(error);
-      },
-      onSuccess: (data) => {
-        router.push(`/workflows/${data.id}`);
-      },
-    });
-  };
+  const [open, setOpen] = useState(false);
   return (
     <>
-      {modal}
+      <CreateWorkflowDialog open={open} onOpenChange={setOpen} />
       <EmptyView
-        onNew={handleCreate}
+        onNew={() => setOpen(true)}
         message="You haven't create any workflows yet. Get started by creating your first workflow"
       />
     </>
