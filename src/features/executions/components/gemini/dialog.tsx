@@ -36,10 +36,26 @@ import { useForm } from "react-hook-form";
 import z from "zod";
 
 const AVAILABLE_MODELS = [
-  "gemma-2-27b-it",
+  "gemini-2.5-flash-lite",
+  "gemini-2.5-flash-tts",
   "gemini-2.5-flash",
-  "gemini-1.5-flash",
+  "gemini-robotics-er-1.5-preview",
+  "gemma-3-12b",
+  "gemma-3-1b",
+  "gemma-3-27b",
+  "gemma-3-2b",
+  "gemma-3-4b",
+  "gemini-2.5-flash-live",
+  "gemini-2.5-flash-native-audio-dialog",
+  "gemini-2.0-flash-live",
 ] as const;
+
+const DEFAULT_MODEL: (typeof AVAILABLE_MODELS)[number] = "gemma-3-27b";
+
+const resolveModel = (value?: string): (typeof AVAILABLE_MODELS)[number] =>
+  (AVAILABLE_MODELS as readonly string[]).includes(value || "")
+    ? (value as (typeof AVAILABLE_MODELS)[number])
+    : DEFAULT_MODEL;
 
 const formSchema = z.object({
   variableName: z
@@ -77,7 +93,7 @@ export const GeminiDialog = ({
     resolver: zodResolver(formSchema),
     defaultValues: {
       variableName: defaultValues.variableName || "",
-      model: defaultValues.model || "gemma-2-27b-it",
+      model: resolveModel(defaultValues.model),
       credentialId: defaultValues.credentialId || "",
       systemPrompt: defaultValues.systemPrompt || "",
       userPrompt: defaultValues.userPrompt || "",
@@ -88,7 +104,7 @@ export const GeminiDialog = ({
     if (open) {
       form.reset({
         variableName: defaultValues.variableName || "",
-        model: defaultValues.model || "gemma-2-27b-it",
+        model: resolveModel(defaultValues.model),
         credentialId: defaultValues.credentialId || "",
         systemPrompt: defaultValues.systemPrompt || "",
         userPrompt: defaultValues.userPrompt || "",

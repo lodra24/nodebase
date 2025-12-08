@@ -83,7 +83,7 @@ export const geminiExecutor: NodeExecutor<GeminiData> = async ({
   });
 
   // Prefer high-quota Gemma by default; allow user-selected model when provided.
-  const selectedModel = data.model || "gemma-2-27b-it";
+  const selectedModel = data.model || "gemma-3-27b";
 
   try {
     const { steps } = await step.ai.wrap("gemini-generate-text", generateText, {
