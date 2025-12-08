@@ -69,11 +69,7 @@ export const ExecuteWorkflowButton = ({
       ) : (
         <FlaskConicalIcon className="size-4" />
       )}
-      {isSaving
-        ? "Saving..."
-        : isExecuting
-        ? "Starting..."
-        : "Execute Workflow"}
+      {isSaving ? "Saving.." : isExecuting ? "Starting..." : "Execute Workflow"}
     </Button>
   );
 };
