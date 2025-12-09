@@ -121,7 +121,7 @@ export const SlackDialog = ({
                   <FormControl>
                     <Textarea
                       className="min-h-[100px] font-mono text-sm"
-                      placeholder="Hello from Nodebase! {{json.httpResponse.data}}"
+                      placeholder="Hello from Flowstate! {{json.httpResponse.data}}"
                       {...field}
                     />
                   </FormControl>
@@ -145,7 +145,7 @@ export const SlackDialog = ({
                   <FormItem>
                     <FormLabel>Username (Optional)</FormLabel>
                     <FormControl>
-                      <Input placeholder="Nodebase Bot" {...field} />
+                      <Input placeholder="Flowstate Bot" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

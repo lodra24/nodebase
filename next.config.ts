@@ -20,7 +20,7 @@ export default withSentryConfig(nextConfig, {
 
   org: "dragon-software",
 
-  project: "nodebase",
+  project: "flowstate",
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
